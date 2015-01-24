@@ -17,7 +17,7 @@ public class TaxRatio implements Serializable {
 	private int id;
 
 	@Column(nullable = false)
-	private double ratio;
+	private int ratio;
 
 	public TaxRatio() {
 	}
@@ -27,9 +27,7 @@ public class TaxRatio implements Serializable {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + id;
-		long temp;
-		temp = Double.doubleToLongBits(ratio);
-		result = prime * result + (int) (temp ^ (temp >>> 32));
+		result = prime * result + ratio;
 		return result;
 	}
 
@@ -44,8 +42,7 @@ public class TaxRatio implements Serializable {
 		TaxRatio other = (TaxRatio) obj;
 		if (id != other.id)
 			return false;
-		if (Double.doubleToLongBits(ratio) != Double
-				.doubleToLongBits(other.ratio))
+		if (ratio != other.ratio)
 			return false;
 		return true;
 	}
@@ -63,16 +60,18 @@ public class TaxRatio implements Serializable {
 		this.id = id;
 	}
 
-	public double getRatio() {
+	public int getRatio() {
 		return ratio;
 	}
 
-	public void setRatio(double ratio) {
+	public void setRatio(int ratio) {
 		this.ratio = ratio;
 	}
 
 	public static long getSerialversionuid() {
 		return serialVersionUID;
 	}
+	
+
 
 }

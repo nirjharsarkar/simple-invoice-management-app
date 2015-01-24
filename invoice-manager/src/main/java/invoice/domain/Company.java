@@ -36,7 +36,7 @@ public class Company implements Serializable {
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "company")
 	private List<Bank> banks;
 
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "company", fetch = FetchType.EAGER)
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "company")
 	@Column(nullable = false)
 	private List<Adress> adresses;
 

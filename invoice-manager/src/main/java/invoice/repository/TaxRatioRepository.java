@@ -8,4 +8,5 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 @RepositoryRestResource(collectionResourceRel = "taxRatio", path = "taxRatio")
 public interface TaxRatioRepository extends JpaRepository<TaxRatio, Integer> {
 
+	
 }
