@@ -1,0 +1,22 @@
+<div class="container">
+
+	<ul class="nav nav-pills" role="tablist">
+		<li ng-class="{ active:navBar.isActive('/')}"><a href="#/" >home</a></li>
+		<li ng-class="{ active:navBar.isActive('/phoneType')}"
+		ng_show="authority === 'ROLE_ADMIN'"><a href="#/phoneType" >Typ telefonu</a></li>
+		<li ng-class="{ active:navBar.isActive('/')}"><a href="#/" >home</a></li>
+		<li ng-class="{ active:navBar.isActive('/')}"><a href="#/" >home</a></li>
+		<li ng-class="{ active:navBar.isActive('/')}"><a href="#/" >home</a></li>
+		<li ng-class="{ active:navBar.isActive('/')}"><a href="#/" >home</a></li>
+		<li ng-class="{ active:navBar.isActive('/')}"><a href="#/" >home</a></li>
+		<li ng-class="{ active:navBar.isActive('/')}"><a href="#/" >home</a></li>
+		<li ng-class="{ active:navBar.isActive('/')}"><a href="#/" >home</a></li>
+		<li ng-class="{ active:navBar.isActive('/')}"><a href="#/" >home</a></li>
+		<li ng-class="{ active:navBar.isActive('/login')}"><a href="#/login" ng_hide="authenticated">login</a></li>
+		<li ng-show="authenticated"><a href="" ng-click="navBar.logout()">logout</a></li>
+	</ul>
+
+
+		
+
+</div>

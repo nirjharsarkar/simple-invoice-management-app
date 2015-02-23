@@ -48,6 +48,9 @@ public class Employee implements Serializable {
 
 	@ManyToOne
 	private Company company;
+	
+	@ManyToOne
+	private Role role;
 
 	public Employee() {
 	}
@@ -69,6 +72,7 @@ public class Employee implements Serializable {
 		result = prime * result
 				+ ((password == null) ? 0 : password.hashCode());
 		result = prime * result + ((phones == null) ? 0 : phones.hashCode());
+		result = prime * result + ((role == null) ? 0 : role.hashCode());
 		return result;
 	}
 
@@ -128,6 +132,11 @@ public class Employee implements Serializable {
 				return false;
 		} else if (!phones.equals(other.phones))
 			return false;
+		if (role == null) {
+			if (other.role != null)
+				return false;
+		} else if (!role.equals(other.role))
+			return false;
 		return true;
 	}
 
@@ -137,7 +146,7 @@ public class Employee implements Serializable {
 				+ ", lastname=" + lastname + ", login=" + login + ", password="
 				+ password + ", isLocked=" + isLocked + ", email=" + email
 				+ ", phones=" + phones + ", adress=" + adress + ", company="
-				+ company + "]";
+				+ company + ", role=" + role + "]";
 	}
 
 	public Long getId() {
@@ -222,6 +231,14 @@ public class Employee implements Serializable {
 
 	public static long getSerialversionuid() {
 		return serialVersionUID;
+	}
+
+	public Role getRole() {
+		return role;
+	}
+
+	public void setRole(Role role) {
+		this.role = role;
 	}
 
 }

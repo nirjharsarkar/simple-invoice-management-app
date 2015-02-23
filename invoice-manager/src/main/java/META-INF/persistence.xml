@@ -13,5 +13,6 @@
 		<class>invoice.domain.Bank</class>
 		<class>invoice.domain.ItemUnitOfMass</class>
 		<class>invoice.domain.TaxRatio</class>
+		<class>invoice.domain.Role</class>
 	</persistence-unit>
 </persistence>

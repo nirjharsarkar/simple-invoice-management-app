@@ -12,7 +12,6 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableAutoConfiguration
 @EnableJpaRepositories
 @EnableTransactionManagement
-//@Import(RepositoryRestMvcConfiguration.class) moved to RestDataConfig.java
 public class Application{
 
 	public static void main(String[] args) {

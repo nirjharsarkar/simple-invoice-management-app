@@ -1,0 +1,27 @@
+<div ng-show="authority === 'ROLE_ADMIN'">
+<h1>Phone type:</h1>
+	
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div ng-show="!authenticated">
+	<p>Login to see this content</p>
+</div>
+<div ng-show="(authenticated && authority !== 'ROLE_ADMIN')">
+	<p>Access denied</p>
+</div>
