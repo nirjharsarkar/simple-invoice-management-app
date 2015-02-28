@@ -1,22 +1,35 @@
-<div ng-show="authority === 'ROLE_ADMIN'">
-<h1>Phone type:</h1>
-	
+<div ng-show="authority === 'ROLE_ADMIN'"  ng-cloak class="ng-cloak">
+	<h1>Phone type:</h1>
+
+	<p>
+		<a href="#/phoneType/new">add new</a>
+	</p>
+	<div ng-show="phoneTypeList._embedded.phoneType" >
+		<table>
+			<thead>
+				<tr>
+					<td>Name</td>
+					<td></td>
+				</tr>
+			</thead>
+			<tbody>
+				<tr ng-repeat="type in phoneTypeList._embedded.phoneType">
+					<td>{{type.name}}</td>
+					<td>{{type._links.self.href}}<a href=""
+						ng-click="deleteItem(type._links.self.href)">delete</a></td>
+				</tr>
+
+			</tbody>
+		</table>
+	</div>
+	<div ng-hide="phoneTypeList._embedded.phoneType"  ng-cloak class="ng-cloak">
+		<p>Phone type list is empty</p>
+	</div>
+
+
+
+
 </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 <div ng-show="!authenticated">

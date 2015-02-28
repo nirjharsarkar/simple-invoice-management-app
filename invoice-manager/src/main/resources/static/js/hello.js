@@ -1,4 +1,7 @@
-angular.module('hello', [ 'ngRoute', 'ngResource' ])
+(function(){  
+	
+
+angular.module('hello', [ 'ngRoute', 'ngResource', 'ngLocale' ])
 .config(function($routeProvider) {
 	
 //	route config
@@ -20,13 +23,44 @@ angular.module('hello', [ 'ngRoute', 'ngResource' ])
 	}).otherwise('/');
 	})
 	
+//	services for /api/
+	.factory('PhoneType', ['$resource',
+	function($resource){
+	    return $resource('api/phoneType/:id', {}, {
+	    	query: { isArray:false }
+	    	//delete: {url:'url', method:'DELETE'}
+	    });
+	}])
+	  
 //	controllers attached to routes	
-	.controller('phoneTypeListCtrl', function($scope, $http) {
-	$http.get('/resource/').success(function(data) {
-		$scope.greeting = data;
-
-	})
-	})
+//	controllers attached to routes	
+	.controller('phoneTypeListCtrl', ['$scope', 'PhoneType', '$http', '$location', '$route', function($scope, PhoneType, $http, $location, $route) {
+	PhoneType.query(function(data){
+		$scope.phoneTypeList = data;
+		});	
+	$scope.deleteItem = function(urlReference){
+		$http.delete(urlReference).success(function(){
+			$route.reload();
+		});
+	};
+	//PhoneType.delete({  });
+	//console.log(phoneTypeList);	
+		}])
+		.controller('phoneTypeNewCtrl',['$scope','PhoneType', '$location', function($scope, PhoneType, $location) {
+			//$scope.phoneTypeNew = {};
+			$scope.phoneTypeForm = function(){
+				PhoneType.save($scope.phoneTypeNew);
+				$location.path('/phoneType')
+			};
+			}])
+			
+			
+//	.controller('phoneTypeListCtrl', ['$scope', 'PhoneType', function($scope, PhoneType) {
+//		var phoneType = PhoneType.get({ id: $scope.id }, function() {
+//		    //console.log(phoneType);
+//		  });
+//		 // $scope.orderProp = 'age';
+//		}])
 	.controller('homeCtrl', function($scope, $http) {
 	$http.get('/resource/').success(function(data) {
 		$scope.greeting = data;
@@ -59,6 +93,7 @@ angular.module('hello', [ 'ngRoute', 'ngResource' ])
 			})
 		};
 })
+
 //	custom directives
 .directive('navigationBar', function(){
 	return{
@@ -124,6 +159,8 @@ angular.module('hello', [ 'ngRoute', 'ngResource' ])
 	}
 })
 ;
+
+})();
 
 /* sample data from PricipalController at /user/
  * {
