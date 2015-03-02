@@ -19,9 +19,6 @@ public class PhoneType implements Serializable {
 	@Column(nullable = false, unique = true)
 	private String name;
 
-	@Column(nullable = false)
-	private String orderBy;
-
 	public PhoneType() {
 	}
 
@@ -31,7 +28,6 @@ public class PhoneType implements Serializable {
 		int result = 1;
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
-		result = prime * result + ((orderBy == null) ? 0 : orderBy.hashCode());
 		return result;
 	}
 
@@ -54,18 +50,12 @@ public class PhoneType implements Serializable {
 				return false;
 		} else if (!name.equals(other.name))
 			return false;
-		if (orderBy == null) {
-			if (other.orderBy != null)
-				return false;
-		} else if (!orderBy.equals(other.orderBy))
-			return false;
 		return true;
 	}
 
 	@Override
 	public String toString() {
-		return "PhoneType [id=" + id + ", name=" + name + ", orderBy="
-				+ orderBy + "]";
+		return "PhoneType [id=" + id + ", name=" + name + "]";
 	}
 
 	public Long getId() {
@@ -84,14 +74,7 @@ public class PhoneType implements Serializable {
 		this.name = name;
 	}
 
-	public String getOrderBy() {
-		return orderBy;
-	}
-
-	public void setOrderBy(String orderBy) {
-		this.orderBy = orderBy;
-	}
-
+	
 	public static long getSerialversionuid() {
 		return serialVersionUID;
 	}
