@@ -1,74 +1,100 @@
 (function(){  
 	
 
-angular.module('hello', [ 'ngRoute', 'ngResource', 'ngLocale' ])
-.config(function($routeProvider) {
-	
-//	route config
-	$routeProvider.when('/', {
-		templateUrl : '/partials/templates/home.html',
-		controller : 'homeCtrl'
-	}).when('/phoneType', {
-		templateUrl : '/partials/templates/phoneType/phoneType.html',
-		controller : 'phoneTypeListCtrl'
-	}).when('/phoneType/new', {
-		templateUrl : '/partials/templates/phoneType/phoneTypeNewForm.html',
-		controller : 'phoneTypeNewCtrl'
-	}).when('/phoneType/edit', {
-		templateUrl : '/partials/templates/phoneType/phoneTypeEditForm.html',
-		controller : 'phoneTypeEditCtrl'
-	}).when('/login', {
-		templateUrl : '/partials/templates/login/login.html',
-		controller : 'loginCtrl'
-	}).otherwise('/');
-	})
-	
-//	services for /api/
-	.factory('PhoneType', ['$resource',
-	function($resource){
-	    return $resource('api/phoneType/:id', {}, {
-	    	query: { isArray:false }
-	    	//delete: {url:'url', method:'DELETE'}
-	    });
-	}])
-	  
-//	controllers attached to routes	
-//	controllers attached to routes	
-	.controller('phoneTypeListCtrl', ['$scope', 'PhoneType', '$http', '$location', '$route', function($scope, PhoneType, $http, $location, $route) {
-	PhoneType.query(function(data){
-		$scope.phoneTypeList = data;
-		});	
-	$scope.deleteItem = function(urlReference){
-		$http.delete(urlReference).success(function(){
-			$route.reload();
-		});
-	};
-	//PhoneType.delete({  });
-	//console.log(phoneTypeList);	
-		}])
-		.controller('phoneTypeNewCtrl',['$scope','PhoneType', '$location', function($scope, PhoneType, $location) {
-			//$scope.phoneTypeNew = {};
-			$scope.phoneTypeForm = function(){
-				PhoneType.save($scope.phoneTypeNew);
-				$location.path('/phoneType')
-			};
-			}])
-			
-			
-//	.controller('phoneTypeListCtrl', ['$scope', 'PhoneType', function($scope, PhoneType) {
-//		var phoneType = PhoneType.get({ id: $scope.id }, function() {
-//		    //console.log(phoneType);
-//		  });
-//		 // $scope.orderProp = 'age';
-//		}])
-	.controller('homeCtrl', function($scope, $http) {
-	$http.get('/resource/').success(function(data) {
-		$scope.greeting = data;
+angular.module('app', [ 'ui.router', 'ngResource' ])
 
-	})
-	})
-	.controller('loginCtrl',
-		function($rootScope, $scope, $http, $location) {
+//	ui-route config
+
+.config(function($stateProvider, $urlRouterProvider) {
+  $urlRouterProvider.otherwise("/");
+  $stateProvider
+    .state('home', {
+      url: "/",
+      templateUrl: "partials/templates/home.html"
+    })
+    .state('home.resource', {
+      url: "home/resource",
+      templateUrl: "partials/templates/home.resource.html",
+      controller: function($scope, $http) {
+    	$http.get('/resource/').success(function(data) {
+    		$scope.greeting = data;
+    	})
+      }
+    })
+    .state('phoneType', {
+      url: "/phoneType",
+     // abstract: true,
+      templateUrl: "partials/templates/phoneType/phoneType.html"
+      //controller: ''
+    })
+    .state('phoneType.new', {
+      url: "/new",
+      templateUrl: "partials/templates/phoneType/phoneType.new.html",
+      controller: 'PhoneTypeNewController'
+    })
+    .state('phoneType.edit', {
+      url: "/:id/edit",
+      templateUrl: "partials/templates/phoneType/phoneType.edit.html",
+      controller: 'PhoneTypeEditController'
+    })
+    .state('phoneType.list', {
+      url: "/list",
+      templateUrl: "partials/templates/phoneType/phoneType.list.html",
+      controller: 'PhoneTypeListController'
+    })
+    .state('login', {
+      url: "/login",
+      templateUrl: "partials/templates/login/login.html",
+      controller: 'loginController'
+    })
+    .state('logout', {
+      url: "/logout",
+      template: "<p>logging out..</p>",
+      controller: "logoutController"
+    });
+})
+
+//	services for /api/
+
+.factory('PhoneType', ['$resource',
+  function($resource){
+    return $resource('api/phoneType/:id', {}, {
+      query: {method:'GET', isArray:false}
+    });
+    
+  }])
+
+//	controllers attached to states
+  
+.controller('PhoneTypeListController', function($scope, PhoneType, $state) { 
+    $scope.phoneTypeList = PhoneType.query();
+    $scope.deleteItem = function(id){
+    	PhoneType.delete({id: id}, function(){
+    		$state.go('phoneType.list', {}, {reload: true});
+    	});
+    };
+    
+})
+.controller('PhoneTypeNewController', function($scope, PhoneType, $state) {
+	  $scope.phoneTypeNew = new PhoneType();
+	  $scope.phoneTypeForm = function(){
+	   	 $scope.phoneTypeNew.$save(function(){
+	   		$scope.phoneTypeList = PhoneType.query();
+	         $state.go('phoneType.list');
+	     });
+	  };
+  	
+  
+})
+.controller('PhoneTypeEditController', function($scope, PhoneType, $state, $stateParams) {
+		$scope.phoneTypeEdit = PhoneType.get({ id: $stateParams.id });
+		$scope.phoneTypeFormEdit = function(){	
+			PhoneType.save($scope.phoneTypeEdit, function(){
+				$state.go('phoneType.list');
+			});
+		};
+})
+.controller('loginController', function($rootScope, $scope, $http, $state) {
 		
 		$scope.credentials = {};
 		$scope.login = function() {
@@ -79,29 +105,49 @@ angular.module('hello', [ 'ngRoute', 'ngResource', 'ngLocale' ])
 			}).success(function(data) {
 				$rootScope.authenticate(function() {
 					if ($rootScope.authenticated) {
-						$location.path("/");
+						//$location.path("/");
 						$scope.error = false;
+						$state.go('home');
 					} else {
-						$location.path("/login");
+						//$location.path("/login");
 						$scope.error = true;
+						$rootScope.authority = {};
+						$state.go('login');
 					}
 				});
 			}).error(function(data) {
-				$location.path("/login");
+				//$location.path("/login");
 				$scope.error = true;
 				$rootScope.authenticated = false;
+				$rootScope.authority = {};
+				$state.go('login');
 			})
 		};
-})
+  })
+  .controller('logoutController', function($scope, $http, $rootScope, $state) {
+      $scope.logout = function() {
+			$http.post('logout', {}).success(function() {
+				$rootScope.authenticated = false;
+				$rootScope.authority = {};
+				$state.go('home');
+			}).error(function(data) {
+				$rootScope.authenticated = false;
+				$rootScope.authority = {};
+				$state.go('home');
+			});
+		};
+		$scope.logout();
+    })
 
 //	custom directives
+    
 .directive('navigationBar', function(){
 	return{
 		
 		restrict: 'E',
 		templateUrl: '/partials/templates/navigationBar.html',
 		controller: 
-			function($rootScope, $scope, $http, $location, $route, $window){
+			function($rootScope, $scope, $http, $state, $window){
 			
 				// auth check on page reload
 				$rootScope.authenticate = 
@@ -112,48 +158,20 @@ angular.module('hello', [ 'ngRoute', 'ngResource', 'ngLocale' ])
 						$rootScope.authority = data.authorities[0].authority;
 					} else {
 						$rootScope.authenticated = false;
+						$rootScope.authority = {};
+						//$state.go('login');
 					}
 					callback && callback();
 				}).error(function() {
 					$rootScope.authenticated = false;
+					$rootScope.authority = {};
+					$state.go('login');
 					callback && callback();
 				});
 				}	
 					
 				$rootScope.authenticate();
 				
-				
-				//logout function
-				this.logout = function() {
-					$http.post('logout', {}).success(function() {
-						$rootScope.authenticated = false;
-						$window.location.href = '/';
-					}).error(function(data) {
-						$rootScope.authenticated = false;
-					});
-				}
-
-				
-				//manu buttons
-				//this.asd = $location.url()
-				//this.selectedMenu = "home";
-				/*
-				this.selectMenu = function(newMenu){
-					this.selectedMenu = newMenu;
-				};
-				
-				this.isSelected = function(currentMenu){
-					if(this.selectedMenu===currentMenu){
-						return true
-					}else{
-						return false;
-					}
-				};*/
-				//alert($location.path());
-				//test
-				this.isActive = function(route) {
-			        return route === $location.path();
-			    };
 			},
 		controllerAs: 'navBar'
 	}
@@ -172,59 +190,3 @@ angular.module('hello', [ 'ngRoute', 'ngResource', 'ngLocale' ])
  * "name":"user"}
  * 
  */
-/*.controller('navigation',
-		function($rootScope, $scope, $http, $location) {
-		var authenticate = function(callback) {
-		$http.get('user').success(function(data) {
-			if (data.name) {
-				$rootScope.authenticated = true;
-				$rootScope.role = data.principal.authorities[0];
-			} else {
-				$rootScope.authenticated = false;
-				$rootScope.role = '';
-			}
-			callback && callback();
-		}).error(function() {
-			$rootScope.authenticated = false;
-			$rootScope.role = '';
-			callback && callback();
-		});
-	
-		}
-
-		authenticate();
-	
-		$scope.credentials = {};
-	
-		$scope.login = function() {
-			$http.post('login', $.param($scope.credentials), {
-				headers : {
-					"content-type" : "application/x-www-form-urlencoded"
-				}
-			}).success(function(data) {
-				authenticate(function() {
-					if ($rootScope.authenticated) {
-						$location.path("/");
-						$scope.error = false;
-					} else {
-						$location.path("/login");
-						$scope.error = true;
-					}
-				});
-			}).error(function(data) {
-				$location.path("/login");
-				$scope.error = true;
-				$rootScope.authenticated = false;
-			})
-		};
-	
-		$scope.logout = function() {
-			$http.post('logout', {}).success(function() {
-				$rootScope.authenticated = false;
-				$location.path("/");
-			}).error(function(data) {
-				$rootScope.authenticated = false;
-			});
-		}
-
-})*/
