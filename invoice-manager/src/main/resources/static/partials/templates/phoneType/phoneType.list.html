@@ -6,7 +6,7 @@
 		<div ng-hide="!phoneTypeList._embedded.phoneType == ''">
 			<p>Phone type list is empty</p>
 		</div>
-		<table ng-show="phoneTypeList._embedded.phoneType.length > 0">
+		<table ng-show="phoneTypeList._embedded.phoneType.length > 0" class="table table-striped">
 			<thead>
 				<tr>
 					<td>Name</td>
@@ -15,11 +15,11 @@
 				</tr>
 			</thead>
 			<tbody>
-				<tr ng-repeat="type in phoneTypeList._embedded.phoneType">
+				<tr ng-repeat="type in phoneTypeList._embedded.phoneType track by type._links.self.href.split('/')[5]">
 					<td>{{type.name}}</td>
-					<td>{{type._links.self.href.split("/")[5]}}<a ui-sref="phoneType.edit({id:type._links.self.href.split('/')[5]})">edit</a></td>
-					<td>{{type._links.self.href.split("/")[5]}}<a href=""
-						ng-click="deleteItem(type._links.self.href.split('/')[5])">delete</a></td>
+					<td><a ui-sref="phoneType.edit({id:type._links.self.href.split('/')[5]})" class="btn btn-info" role="button">edit</a></td>
+					<td><a href=""
+						ng-click="deleteItem(type._links.self.href.split('/')[5])" class="btn btn-danger" role="button">delete</a></td>
 				</tr>
 			</tbody>
 		</table>

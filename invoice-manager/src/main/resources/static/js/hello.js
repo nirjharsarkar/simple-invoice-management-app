@@ -61,21 +61,23 @@ angular.module('app', [ 'ui.router', 'ngResource' ])
     return $resource('api/phoneType/:id', {}, {
       query: {method:'GET', isArray:false}
     });
-    
   }])
 
 //	controllers attached to states
   
 .controller('PhoneTypeListController', function($scope, PhoneType, $state) { 
+	$scope.phoneTypeList = {};
     $scope.phoneTypeList = PhoneType.query();
     $scope.deleteItem = function(id){
     	PhoneType.delete({id: id}, function(){
-    		$state.go('phoneType.list', {}, {reload: true});
+    		$scope.phoneTypeList = PhoneType.query();
+    		//$state.go('phoneType.list', {}, { });
     	});
     };
     
 })
 .controller('PhoneTypeNewController', function($scope, PhoneType, $state) {
+	$scope.phoneTypeNew = {};
 	  $scope.phoneTypeNew = new PhoneType();
 	  $scope.phoneTypeForm = function(){
 	   	 $scope.phoneTypeNew.$save(function(){
@@ -88,8 +90,9 @@ angular.module('app', [ 'ui.router', 'ngResource' ])
 })
 .controller('PhoneTypeEditController', function($scope, PhoneType, $state, $stateParams) {
 		$scope.phoneTypeEdit = PhoneType.get({ id: $stateParams.id });
+		//console.log(PhoneType.get({ id: $stateParams.id }));
 		$scope.phoneTypeFormEdit = function(){	
-			PhoneType.save($scope.phoneTypeEdit, function(){
+			PhoneType.save({id: $stateParams.id, name: $scope.phoneTypeEdit.name}, function(){
 				$state.go('phoneType.list');
 			});
 		};
